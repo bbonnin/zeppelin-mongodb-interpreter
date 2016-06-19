@@ -1,11 +1,16 @@
 # zeppelin-mongodb-interpreter
 MongoDB interpreter for Apache Zeppelin
 
+## Build
+```sh
+mvn clean package
+```
+
 ## Deployment
 
 * Update `$ZEPPELIN_HOME/conf/zeppeln-site.xml`
 ```xml
-<><property>
+<property>
   <name>zeppelin.interpreters</name>
   <value>...,org.apache.zeppelin.mongodb.MongoDbInterpreter</value>
 </property>
