@@ -1,0 +1,57 @@
+[
+  {
+    "group": "mongodb",
+    "name": "mongodb",
+    "className": "org.apache.zeppelin.mongodb.MongoDbInterpreter",
+    "properties": {
+      "mongo.shell.path": {
+        "envName": null,
+        "propertyName": "mongo.shell.path",
+        "defaultValue": "mongo",
+        "description": "MongoDB shell path"
+      },
+      "mongo.shell.command.table.limit": {
+        "envName": null,
+        "propertyName": "mongo.shell.command.table.limit",
+        "defaultValue": "1000",
+        "description": "Limit of documents displayed in a table"
+      },
+      "mongo.shell.command.timeout": {
+        "envName": null,
+        "propertyName": "mongo.shell.command.timeout",
+        "defaultValue": "60000",
+        "description": "MongoDB shell command timeout"
+      },
+      "mongo.server.host": {
+        "envName": null,
+        "propertyName": "mongo.server.host",
+        "defaultValue": "localhost",
+        "description": "MongoDB server host to connect to"
+      },
+      "mongo.server.port": {
+        "envName": null,
+        "propertyName": "mongo.server.port",
+        "defaultValue": "27017",
+        "description": "MongoDB server port to connect to"
+      },
+      "mongo.server.database": {
+        "envName": null,
+        "propertyName": "mongo.server.database",
+        "defaultValue": "test",
+        "description": "MongoDB database name"
+      },
+      "mongo.server.username": {
+        "envName": null,
+        "propertyName": "mongo.server.username",
+        "defaultValue": "",
+        "description": "Username for authentication"
+      },
+      "mongo.server.password": {
+        "envName": null,
+        "propertyName": "mongo.server.password",
+        "defaultValue": "",
+        "description": "Password for authentication"
+      }
+    }
+  }
+]
