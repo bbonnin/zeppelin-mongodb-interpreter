@@ -39,3 +39,17 @@ In Zeppelin, use `%mongodb` in a paragraph.
 After that, you can type the same Javascript code you use when you write scripts for the Mongo shell.
 For more information, please consult: https://docs.mongodb.com/manual/tutorial/write-scripts-for-the-mongo-shell/
 
+There are two functions that have been added to help you in Zeppelin:
+* printTable(cursor, fields): to print a table 
+* DBQuery.table: to print a table
+
+Examples:
+```javascript
+db.users.find().table(["_id", "name"])
+
+OR
+
+var users = db.users.find();
+printTable(users, ["_id", "name"])
+```
+
