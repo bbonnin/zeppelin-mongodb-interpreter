@@ -3,6 +3,16 @@ MongoDB interpreter for Apache Zeppelin
 
 ## Deployment
 
+* Update `$ZEPPELIN_HOME/conf/zeppeln-site.xml`
+```xml
+<><property>
+  <name>zeppelin.interpreters</name>
+  <value>...,org.apache.zeppelin.mongodb.MongoDbInterpreter</value>
+</property>
+```
+* Create `$ZEPPELIN_HOME/interpreter/mongodb`
+* Copy interpreter jar in `$ZEPPELIN_HOME/interpreter/mongodb`
+
 
 ## Configuration
 
