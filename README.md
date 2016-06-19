@@ -25,6 +25,8 @@ mvn clean package
   <tr><th>Parameter</th><th>Default value</th><th>Description</th></tr>
   <tr><td>mongo.shell.path</td><td>mongo</td><td>Mongo shell path</td></tr>
   <tr><td>mongo.shell.command.timeout</td><td>60000</td><td>Mongo command timeout</td></tr>
+  <tr><td>mongo.shell.command.table.limit</td><td>1000</td><td>Limit of documents displayed in a table</td></tr>
+  <tr><td>mongo.server.database</td><td>test</td><td>MongDB database name</td></tr>
   <tr><td>mongo.server.host</td><td>localhost</td><td>Host of the MongDB server</td></tr>
   <tr><td>mongo.server.port</td><td>27017</td><td>Port of the MongDB server</td></tr>
   <tr><td>mongo.server.username</td><td></td><td>Username for authentication</td></tr>
