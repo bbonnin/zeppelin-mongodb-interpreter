@@ -19,6 +19,8 @@ package org.apache.zeppelin.mongodb;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -26,6 +28,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +36,8 @@ import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
+import org.apache.zeppelin.scheduler.Scheduler;
+import org.apache.zeppelin.scheduler.SchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +57,7 @@ public class MongoDbInterpreter extends Interpreter {
 
   private String dbAddress;
 
-  //private Map<String, Job> runningJobs;
+  private Map<String, Executor> runningProcesses = new HashMap<>();
 
 
   public MongoDbInterpreter(Properties property) {
@@ -69,11 +74,12 @@ public class MongoDbInterpreter extends Interpreter {
 
   @Override
   public void close() {
+    //Nothing to do
   }
 
   @Override
   public FormType getFormType() {
-    return FormType.SIMPLE;
+    return FormType.NONE;
   }
 
   @Override
@@ -86,13 +92,12 @@ public class MongoDbInterpreter extends Interpreter {
 
     // Write script in a temporary file
     // The script is enriched with extensions
-    final File scriptFile = new File(System.getProperty("java.io.tmpdir") + File.separator +
-      "zeppelin-mongo-" + context.getParagraphId() + ".js");
+    final File scriptFile = new File(getScriptFileName(context.getParagraphId()));
     try {
       FileUtils.write(scriptFile,
         SHELL_EXTENSION
           .replace("__ZEPPELIN_TABLE_LIMIT__", getProperty("mongo.shell.command.table.limit")) +
-        script);
+          script);
     }
     catch (IOException e) {
       LOGGER.error("Can not write script in temp file", e);
@@ -121,6 +126,7 @@ public class MongoDbInterpreter extends Interpreter {
 
     try {
       executor.execute(cmdLine);
+      runningProcesses.put(context.getParagraphId(), executor);
     }
     catch (ExecuteException e) {
       LOGGER.error("Can not run script in paragraph " + context.getParagraphId(), e);
@@ -154,6 +160,26 @@ public class MongoDbInterpreter extends Interpreter {
 
   @Override
   public void cancel(InterpreterContext context) {
+    stopProcess(context.getParagraphId());
+    FileUtils.deleteQuietly(new File(getScriptFileName(context.getParagraphId())));
   }
 
+  @Override
+  public Scheduler getScheduler() {
+    return SchedulerFactory.singleton().createOrGetParallelScheduler("mongo", 10);
+  }
+
+  private String getScriptFileName(String paragraphId) {
+    return System.getProperty("java.io.tmpdir") + File.separator +
+        "zeppelin-mongo-" + paragraphId + ".js";
+  }
+
+  private void stopProcess(String paragraphId) {
+    if (runningProcesses.containsKey(paragraphId)) {
+      final Executor executor = runningProcesses.get(paragraphId);
+      final ExecuteWatchdog watchdog = executor.getWatchdog();
+      watchdog.destroyProcess();
+    }
+  }
+  
 }

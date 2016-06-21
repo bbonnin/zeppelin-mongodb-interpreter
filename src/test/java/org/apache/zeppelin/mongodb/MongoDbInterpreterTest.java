@@ -1,34 +1,127 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.zeppelin.mongodb;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.PumpStreamHandler;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Properties;
+import java.util.Scanner;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.zeppelin.interpreter.InterpreterContext;
+import org.apache.zeppelin.interpreter.InterpreterOutput;
+import org.apache.zeppelin.interpreter.InterpreterOutputListener;
+import org.apache.zeppelin.interpreter.InterpreterResult;
+import org.apache.zeppelin.interpreter.InterpreterResult.Code;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class MongoDbInterpreterTest {
-
-  @Test
-  public void testCommandine() {
-    final CommandLine cmdLine = CommandLine.parse("mongo");
-    cmdLine.addArgument("--quiet", false);
-    cmdLine.addArgument("--host", false);
-    cmdLine.addArgument("localhost", false);
-    cmdLine.addArgument("--port", false);
-    cmdLine.addArgument("28100", false);
-    cmdLine.addArgument("/tmp/zeppelin-mongo-test.js");
-    final DefaultExecutor executor = new DefaultExecutor();
-    final ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-    executor.setStreamHandler(new PumpStreamHandler(System.out, errorStream));
+/**
+ * As there is no 'mongo' on the build platform, these tests simulates some basic behavior.
+ *
+ */
+public class MongoDbInterpreterTest implements InterpreterOutputListener {
+  
+  private static final String SHELL_EXTENSION =
+    new Scanner(MongoDbInterpreter.class.getResourceAsStream("/shell_extension.js"), "UTF-8")
+      .useDelimiter("\\A").next();
+  
+  private static final boolean IS_WINDOWS = System.getProperty("os.name")
+    .startsWith("Windows");
+  
+  private static final String mongo = System.getProperty("java.io.tmpdir") + 
+    File.separator + "mongo-test." + (IS_WINDOWS ? "bat" : "sh");
+    
+  private final Properties props = new Properties();
+  private final MongoDbInterpreter interpreter = new MongoDbInterpreter(props);
+  private final InterpreterOutput out = new InterpreterOutput(this);
+  private final InterpreterContext context = new InterpreterContext("test", "test", 
+    null, null, null, null, null, null, null, null, out);
+  
+  private ByteBuffer buffer;
+  
+  @BeforeClass
+  public static void setup() {
+    // Create a fake 'mongo'
+    final File mongoFile = new File(mongo);
     try {
-      int exitVal = executor.execute(cmdLine);
-      System.out.println(exitVal);
+      FileUtils.write(mongoFile, "cat $2");
+      FileUtils.forceDeleteOnExit(mongoFile);
     }
     catch (IOException e) {
-      e.printStackTrace();
     }
+  }
+  
+  @Before
+  public void init() {
+    buffer = ByteBuffer.allocate(10000);
+    props.put("mongo.shell.path", (IS_WINDOWS ? "" : "sh ") + mongo);
+    props.put("mongo.shell.command.table.limit", "10000");
+  }
+
+  @Test
+  public void testSuccess() {
+    final String userScript = "print('hello')";
+    
+    final InterpreterResult res = interpreter.interpret(userScript, context);
+    
+    assertTrue(res.code().equals(Code.SUCCESS));
+    
+    try {
+      out.flush();
+    } catch (IOException e) {}
+    
+    
+    final String resultScript = new String(getBufferBytes());
+    
+    final String expectedScript = SHELL_EXTENSION.replace(
+      "__ZEPPELIN_TABLE_LIMIT__", interpreter.getProperty("mongo.shell.command.table.limit")) + 
+      userScript;
+    
+    // The script that is executed must contain the functions provided by this interpreter
+    assertTrue(resultScript.equals(expectedScript));
+  }
+  
+  @Test
+  public void testBadConf() {
+    props.setProperty("mongo.shell.path", "/bad/path/to/mongo");
+    final InterpreterResult res = interpreter.interpret("print('hello')", context);
+    
+    assertTrue(res.code().equals(Code.ERROR));
+  }
+
+  @Override
+  public void onAppend(InterpreterOutput out, byte[] line) {
+    buffer.put(line);
+  }
+
+  @Override
+  public void onUpdate(InterpreterOutput out, byte[] output) {
+  }
+  
+  private byte[] getBufferBytes() {
+    buffer.flip();
+    final byte[] bufferBytes = new byte[buffer.remaining()];
+    buffer.get(bufferBytes);
+    return bufferBytes;
   }
 
 }
