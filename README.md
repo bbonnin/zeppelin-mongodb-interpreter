@@ -50,14 +50,35 @@ There are several functions that have been added to help you in Zeppelin:
 * DBQuery.prototype.table: to print a table (it invokes the previous function)
 * DBCommandCursor.prototype.table: same as above
 
+Examples:
+```javascript
+%mongodb
+
+// Display a table
+db.zipcodes.find({ "city":"CHICAGO", "state": "IL" }).table()
+```
+
+```javascript
+%mongodb
+
+var states = db.zipcodes.aggregate( [
+   { $group: { _id: "$state", totalPop: { $sum: "$pop" } } },
+   { $match: { totalPop: { $lt: 1000*1000 } } },
+   { $sort: { totalPop: 1 } }
+] )
+
+// Build a 'table'
+print("%table state\ttotalPop")
+states.forEach(state => { print(state._id + "\t" + state.totalPop) })
+```
+
 
 ## Examples
 
 * Configuration:
 ![Configuration](docs/zeppelin-mongo-config.png)
 
-* Queries
-These examples come from: https://docs.mongodb.com/manual/tutorial/aggregation-zip-code-data-set/
+* Queries (these examples come from: https://docs.mongodb.com/manual/tutorial/aggregation-zip-code-data-set/)
 ![Examples](docs/zeppelin-mongo-examples.png)
 
 
