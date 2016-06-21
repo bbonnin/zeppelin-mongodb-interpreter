@@ -47,7 +47,7 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
   private static final boolean IS_WINDOWS = System.getProperty("os.name")
     .startsWith("Windows");
   
-  private static final String mongo = System.getProperty("java.io.tmpdir") + 
+  private static final String MONGO_SHELL = System.getProperty("java.io.tmpdir") + 
     File.separator + "mongo-test." + (IS_WINDOWS ? "bat" : "sh");
     
   private final Properties props = new Properties();
@@ -61,9 +61,9 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
   @BeforeClass
   public static void setup() {
     // Create a fake 'mongo'
-    final File mongoFile = new File(mongo);
+    final File mongoFile = new File(MONGO_SHELL);
     try {
-      FileUtils.write(mongoFile, "cat $2");
+      FileUtils.write(mongoFile, (IS_WINDOWS ? "@echo off\ntype \"%2%\"" : "cat \"$2\""));
       FileUtils.forceDeleteOnExit(mongoFile);
     }
     catch (IOException e) {
@@ -73,7 +73,7 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
   @Before
   public void init() {
     buffer = ByteBuffer.allocate(10000);
-    props.put("mongo.shell.path", (IS_WINDOWS ? "" : "sh ") + mongo);
+    props.put("mongo.shell.path", (IS_WINDOWS ? "" : "sh ") + MONGO_SHELL);
     props.put("mongo.shell.command.table.limit", "10000");
   }
 
@@ -83,7 +83,7 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
     
     final InterpreterResult res = interpreter.interpret(userScript, context);
     
-    assertTrue(res.code().equals(Code.SUCCESS));
+    assertTrue("Check SUCCESS: " + res.message(), res.code().equals(Code.SUCCESS));
     
     try {
       out.flush();
@@ -97,7 +97,7 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
       userScript;
     
     // The script that is executed must contain the functions provided by this interpreter
-    assertTrue(resultScript.equals(expectedScript));
+    assertTrue("Check SCRIPT", resultScript.equals(expectedScript));
   }
   
   @Test
