@@ -40,8 +40,11 @@ After that, you can type the same Javascript code you use when you write scripts
 For more information, please consult: https://docs.mongodb.com/manual/tutorial/write-scripts-for-the-mongo-shell/
 
 There are two functions that have been added to help you in Zeppelin:
-* printTable(cursor, fields): to print a table 
-* DBQuery.table: to print a table
+* printTable(cursor, fields, flattenArray): to print a table (i.e. it uses `%table`)
+  * cursor: a DBQuery instance
+  * fields: an array of field names to put in the table
+  * flattenArray: if true, the arrays in the documents will also be flatten (false by default)
+* DBQuery.prototype.table: to print a table (it invokes the previous function)
 
 Examples:
 ```javascript
@@ -52,4 +55,8 @@ OR
 var users = db.users.find();
 printTable(users, ["_id", "name"])
 ```
+
+## Examples
+
+These examples come from: https://docs.mongodb.com/manual/tutorial/aggregation-zip-code-data-set/
 
