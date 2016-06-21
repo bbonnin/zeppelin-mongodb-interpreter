@@ -2,6 +2,9 @@
 MongoDB interpreter for Apache Zeppelin
 
 ## Build
+
+Requirement: Zeppelin must be in your local repo.
+
 ```sh
 mvn clean package
 ```
