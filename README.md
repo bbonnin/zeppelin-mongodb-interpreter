@@ -42,24 +42,22 @@ In Zeppelin, use `%mongodb` in a paragraph.
 After that, you can type the same Javascript code you use when you write scripts for the Mongo shell.
 For more information, please consult: https://docs.mongodb.com/manual/tutorial/write-scripts-for-the-mongo-shell/
 
-There are two functions that have been added to help you in Zeppelin:
-* printTable(cursor, fields, flattenArray): to print a table (i.e. it uses `%table`)
-  * cursor: a DBQuery instance
-  * fields: an array of field names to put in the table
+There are several functions that have been added to help you in Zeppelin:
+* printTable(cursor, fields, flattenArray): to print a table (i.e. it uses `%table`). Arguments:
+  * cursor: a DBQuery or DBCommandCursor instance
+  * fields: an array of field names to put in the table (can be null)
   * flattenArray: if true, the arrays in the documents will also be flatten (false by default)
 * DBQuery.prototype.table: to print a table (it invokes the previous function)
+* DBCommandCursor.prototype.table: same as above
 
-Examples:
-```javascript
-db.users.find().table(["_id", "name"])
-
-OR
-
-var users = db.users.find();
-printTable(users, ["_id", "name"])
-```
 
 ## Examples
 
+* Configuration:
+![Configuration](docs/zeppelin-mongo-config.png)
+
+* Queries
 These examples come from: https://docs.mongodb.com/manual/tutorial/aggregation-zip-code-data-set/
+![Examples](docs/zeppelin-mongo-examples.png)
+
 
