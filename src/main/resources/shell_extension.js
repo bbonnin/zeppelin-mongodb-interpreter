@@ -16,8 +16,10 @@ function flattenObject(obj, flattenArray) {
                 
                 toReturn[i + '.' + x] = flatObject[x];
             }
-        } else {
+        } else if (toString.call( obj[i] ) === '[object Array]') {
             toReturn[i] = tojson(obj[i], null, true);
+        } else {
+            toReturn[i] = obj[i];
         }
     }
     return toReturn;
@@ -62,4 +64,7 @@ DBQuery.prototype.table = function (fields, flattenArray) {
     }
     printTable(this, fields, flattenArray);
 }
+
+DBCommandCursor.prototype.table = DBQuery.prototype.table;
+
 
