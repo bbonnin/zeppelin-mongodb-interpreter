@@ -26,14 +26,36 @@ function flattenObject(obj, flattenArray) {
 }
 
 function printTable(dbquery, fields, flattenArray) {
+    
+    var iterator = dbquery;
+    
+    if (toString.call( dbquery ) === '[object Array]') {
+        iterator = (function() {
+            var index = 0,
+                data = dbquery,
+                length = data.length;
+
+            return {
+                next: function() {
+                    if (!this.hasNext()) {
+                        return null;
+                    }
+                    return data[index++];
+                },
+                hasNext: function() {
+                    return index < length;
+                }
+            }
+        }());
+    }
 
     // Flatten all the documents and get all the fields to build a table with all fields
     var docs = [];
     var createFieldSet = fields == null || fields.length == 0;
     var fieldSet = new Set(fields);
     
-    while (dbquery.hasNext()) {
-        var doc = dbquery.next();
+    while (iterator.hasNext()) {
+        var doc = iterator.next();
         doc = flattenObject(doc, flattenArray);
         docs.push(doc);
         if (createFieldSet) {
