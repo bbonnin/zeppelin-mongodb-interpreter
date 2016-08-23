@@ -9,6 +9,10 @@ Requirement: Zeppelin must be in your local repo.
 mvn clean package
 ```
 
+## Download
+
+If you cannot build the jar, you can download it in the [release page](https://github.com/bbonnin/zeppelin-mongodb-interpreter/releases)
+
 ## Deployment
 
 * Update `$ZEPPELIN_HOME/conf/zeppeln-site.xml`
