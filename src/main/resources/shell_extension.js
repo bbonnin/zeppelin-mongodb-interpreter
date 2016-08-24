@@ -52,7 +52,7 @@ function printTable(dbquery, fields, flattenArray) {
     // Flatten all the documents and get all the fields to build a table with all fields
     var docs = [];
     var createFieldSet = fields == null || fields.length == 0;
-    var fieldSet = new Set(fields);
+    var fieldSet = fields ? [].concat(fields) : []; //new Set(fields);
     
     while (iterator.hasNext()) {
         var doc = iterator.next();
@@ -60,22 +60,22 @@ function printTable(dbquery, fields, flattenArray) {
         docs.push(doc);
         if (createFieldSet) {
             for (var i in doc) {
-                if (doc.hasOwnProperty(i)) {
-                    fieldSet.add(i);
+                if (doc.hasOwnProperty(i) && fieldSet.indexOf(i) === -1) {
+                    fieldSet.push(i);
                 }
             }
         }
     }
     
-    fields = [...fieldSet];
+    fields = fieldSet;
 
     var header = "%table ";
-    fields.forEach(field => header += field + "\t")
+    fields.forEach(function (field) { header += field + "\t" })
     print(header.substring(0, header.length - 1));
     
-    docs.forEach(doc => {
+    docs.forEach(function (doc) {
         var row = "";
-        fields.forEach(field => row += doc[field] + "\t")
+        fields.forEach(function (field) { row += doc[field] + "\t" })
         print(row.substring(0, row.length - 1));
     });
 }
