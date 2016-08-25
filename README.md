@@ -1,6 +1,7 @@
 # zeppelin-mongodb-interpreter
 MongoDB interpreter for Apache Zeppelin.
-Support versions of MongoDB: >= 3.0
+
+__Supported versions of MongoDB: >= 3.0__
 
 ## Build
 
