@@ -40,6 +40,12 @@
         "defaultValue": "test",
         "description": "MongoDB database name"
       },
+      "mongo.server.authentdatabase": {
+        "envName": null,
+        "propertyName": "mongo.server.authentdatabase",
+        "defaultValue": "",
+        "description": "MongoDB database name for authentication"
+      },
       "mongo.server.username": {
         "envName": null,
         "propertyName": "mongo.server.username",

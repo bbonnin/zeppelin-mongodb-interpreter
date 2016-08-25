@@ -119,6 +119,11 @@ public class MongoDbInterpreter extends Interpreter {
       cmdLine.addArgument(getProperty("mongo.server.username"), false);
       cmdLine.addArgument("-p", false);
       cmdLine.addArgument(getProperty("mongo.server.password"), false);
+      
+      if (!StringUtils.isEmpty(getProperty("mongo.server.authentdatabase"))) {
+        cmdLine.addArgument("--authenticationDatabase", false);
+        cmdLine.addArgument(getProperty("mongo.server.authentdatabase"), false);
+      }
     }
 
     cmdLine.addArgument(dbAddress, false);
