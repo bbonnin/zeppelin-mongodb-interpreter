@@ -40,6 +40,7 @@ If you cannot build the jar, you can download it in the [release page](https://g
   <tr><td>mongo.server.port</td><td>27017</td><td>Port of the MongDB server</td></tr>
   <tr><td>mongo.server.username</td><td></td><td>Username for authentication</td></tr>
   <tr><td>mongo.server.password</td><td></td><td>Password for authentication</td></tr>
+  <tr><td>mongo.server.authentdatabase</td><td></td><td>Database used for authentication</td></tr>
 </table>
 
 ## How to use
