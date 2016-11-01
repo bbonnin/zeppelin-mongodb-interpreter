@@ -79,7 +79,7 @@ public class MongoDbInterpreter extends Interpreter {
 
   @Override
   public FormType getFormType() {
-    return FormType.NONE;
+    return FormType.SIMPLE;
   }
 
   @Override
