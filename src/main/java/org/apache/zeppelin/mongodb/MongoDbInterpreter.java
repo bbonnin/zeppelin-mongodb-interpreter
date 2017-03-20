@@ -31,7 +31,7 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
@@ -84,7 +84,7 @@ public class MongoDbInterpreter extends Interpreter {
 
   @Override
   public InterpreterResult interpret(String script, InterpreterContext context) {
-    LOGGER.debug("Run MongoDB script: " + script);
+    LOGGER.debug("Run MongoDB script: {}", script);
 
     if (StringUtils.isEmpty(script)) {
       return new InterpreterResult(Code.SUCCESS);
@@ -134,7 +134,7 @@ public class MongoDbInterpreter extends Interpreter {
       runningProcesses.put(context.getParagraphId(), executor);
     }
     catch (ExecuteException e) {
-      LOGGER.error("Can not run script in paragraph " + context.getParagraphId(), e);
+      LOGGER.error("Can not run script in paragraph {}", context.getParagraphId(), e);
 
       final int exitValue = e.getExitValue();
       Code code = Code.ERROR;
@@ -142,13 +142,13 @@ public class MongoDbInterpreter extends Interpreter {
       if (exitValue == 143) {
         code = Code.INCOMPLETE;
         msg = msg + "Paragraph received a SIGTERM.\n";
-        LOGGER.info("The paragraph " + context.getParagraphId() + " stopped executing: " + msg);
+        LOGGER.info("The paragraph {} stopped executing: {}", context.getParagraphId(), msg);
       }
       msg += "ExitValue: " + exitValue;
       result = new InterpreterResult(code, msg);
     }
     catch (IOException e) {
-      LOGGER.error("Can not run script in paragraph " + context.getParagraphId(), e);
+      LOGGER.error("Can not run script in paragraph {}", context.getParagraphId(), e);
       result = new InterpreterResult(Code.ERROR, e.getMessage());
     }
     finally {
