@@ -30,6 +30,7 @@ import org.apache.zeppelin.interpreter.InterpreterOutput;
 import org.apache.zeppelin.interpreter.InterpreterOutputListener;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
+import org.apache.zeppelin.interpreter.InterpreterResultMessageOutput;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
   private final MongoDbInterpreter interpreter = new MongoDbInterpreter(props);
   private final InterpreterOutput out = new InterpreterOutput(this);
   private final InterpreterContext context = new InterpreterContext("test", "test", 
-    null, null, null, null, null, null, null, null, out);
+    null, null, null, null, null, null, null, null, null, out);
   
   private ByteBuffer buffer;
   
@@ -83,7 +84,7 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
     
     final InterpreterResult res = interpreter.interpret(userScript, context);
     
-    assertTrue("Check SUCCESS: " + res.message(), res.code().equals(Code.SUCCESS));
+    assertTrue("Check SUCCESS: " + res.message(), res.code() == Code.SUCCESS);
     
     try {
       out.flush();
@@ -105,18 +106,24 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
     props.setProperty("mongo.shell.path", "/bad/path/to/mongo");
     final InterpreterResult res = interpreter.interpret("print('hello')", context);
     
-    assertTrue(res.code().equals(Code.ERROR));
+    assertTrue(res.code() == Code.ERROR);
   }
 
   @Override
-  public void onAppend(InterpreterOutput out, byte[] line) {
-    buffer.put(line);
+  public void onUpdateAll(InterpreterOutput interpreterOutput) {
+
   }
 
   @Override
-  public void onUpdate(InterpreterOutput out, byte[] output) {
+  public void onAppend(int i, InterpreterResultMessageOutput interpreterResultMessageOutput, byte[] bytes) {
+    buffer.put(bytes);
   }
-  
+
+  @Override
+  public void onUpdate(int i, InterpreterResultMessageOutput interpreterResultMessageOutput) {
+
+  }
+
   private byte[] getBufferBytes() {
     buffer.flip();
     final byte[] bufferBytes = new byte[buffer.remaining()];
