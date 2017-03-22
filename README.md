@@ -3,6 +3,9 @@ MongoDB interpreter for Apache Zeppelin.
 
 __Supported versions of MongoDB: >= 3.0__
 
+
+> If you are interested, there is a Docker image for Zeppelin with MongoDB interpreter: https://hub.docker.com/r/cthiebault/zeppelin-mongodb/
+
 ## Build
 
 Requirement: Zeppelin must be in your local repo.
