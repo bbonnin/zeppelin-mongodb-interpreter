@@ -30,6 +30,10 @@ If you cannot build the jar, you can download it in the [release page](https://g
 * Create `$ZEPPELIN_HOME/interpreter/mongodb`
 * Copy interpreter jar in `$ZEPPELIN_HOME/interpreter/mongodb`
 
+> In some cases, mongodb is not visible in the list of the available interpreters. In this case, after the previous steps, you can create a new interpreter and in the intrepter group, you should be able to select mongodb.
+![Create](docs/zeppelin-mongo-interpreter-install.png)
+
+
 
 ## Configuration
 
