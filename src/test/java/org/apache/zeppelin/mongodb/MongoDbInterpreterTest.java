@@ -54,9 +54,9 @@ public class MongoDbInterpreterTest implements InterpreterOutputListener {
   private final Properties props = new Properties();
   private final MongoDbInterpreter interpreter = new MongoDbInterpreter(props);
   private final InterpreterOutput out = new InterpreterOutput(this);
-  private final InterpreterContext context = new InterpreterContext("test", "test", 
-    null, null, null, null, null, null, null, null, null, out);
-  
+  private final InterpreterContext context = InterpreterContext.builder()
+          .setInterpreterOut(out).setNoteId("test").setNoteName("test").build();
+
   private ByteBuffer buffer;
   
   @BeforeClass
