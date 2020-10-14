@@ -104,7 +104,7 @@ public class MongoDbInterpreter extends Interpreter {
       return new InterpreterResult(Code.ERROR, e.getMessage());
     }
 
-    InterpreterResult result = new InterpreterResult(InterpreterResult.Code.SUCCESS);;
+    InterpreterResult result = new InterpreterResult(InterpreterResult.Code.SUCCESS);
 
     final DefaultExecutor executor = new DefaultExecutor();
     final ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
