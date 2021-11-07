@@ -67,9 +67,12 @@ public class MongoDbInterpreter extends Interpreter {
   @Override
   public void open() {
     commandTimeout = Long.parseLong(getProperty("mongo.shell.command.timeout"));
-    dbAddress = getProperty("mongo.server.host") + ":"
-      + getProperty("mongo.server.port") + "/"
-      + getProperty("mongo.server.database");
+    if (StringUtils.isEmpty(getProperty("mongo.server.uri")))
+      dbAddress = getProperty("mongo.server.host") + ":"
+        + getProperty("mongo.server.port") + "/"
+        + getProperty("mongo.server.database");
+    else
+      dbAddress = getProperty("mongo.server.uri");
   }
 
   @Override
@@ -114,15 +117,17 @@ public class MongoDbInterpreter extends Interpreter {
     final CommandLine cmdLine = CommandLine.parse(getProperty("mongo.shell.path"));
     cmdLine.addArgument("--quiet", false);
 
-    if (!StringUtils.isEmpty(getProperty("mongo.server.username"))) {
-      cmdLine.addArgument("-u", false);
-      cmdLine.addArgument(getProperty("mongo.server.username"), false);
-      cmdLine.addArgument("-p", false);
-      cmdLine.addArgument(getProperty("mongo.server.password"), false);
-      
-      if (!StringUtils.isEmpty(getProperty("mongo.server.authentdatabase"))) {
-        cmdLine.addArgument("--authenticationDatabase", false);
-        cmdLine.addArgument(getProperty("mongo.server.authentdatabase"), false);
+    if (StringUtils.isEmpty(getProperty("mongo.server.uri"))) {
+      if (!StringUtils.isEmpty(getProperty("mongo.server.username"))) {
+        cmdLine.addArgument("-u", false);
+        cmdLine.addArgument(getProperty("mongo.server.username"), false);
+        cmdLine.addArgument("-p", false);
+        cmdLine.addArgument(getProperty("mongo.server.password"), false);
+        
+        if (!StringUtils.isEmpty(getProperty("mongo.server.authentdatabase"))) {
+          cmdLine.addArgument("--authenticationDatabase", false);
+          cmdLine.addArgument(getProperty("mongo.server.authentdatabase"), false);
+        }
       }
     }
 
