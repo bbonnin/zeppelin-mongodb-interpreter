@@ -6,9 +6,9 @@
     "properties": {
       "mongo.shell.uri": {
         "envName": null,
-        "propertyName": "mongo.shell.path",
+        "propertyName": "mongo.server.uri",
         "defaultValue": "mongo",
-        "description": "MongoDB shell path"
+        "description": "MongoDB Connection String"
       },
       "mongo.shell.path": {
         "envName": null,
