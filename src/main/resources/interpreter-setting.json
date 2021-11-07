@@ -4,6 +4,12 @@
     "name": "mongodb",
     "className": "org.apache.zeppelin.mongodb.MongoDbInterpreter",
     "properties": {
+      "mongo.shell.uri": {
+        "envName": null,
+        "propertyName": "mongo.shell.path",
+        "defaultValue": "mongo",
+        "description": "MongoDB shell path"
+      },
       "mongo.shell.path": {
         "envName": null,
         "propertyName": "mongo.shell.path",
