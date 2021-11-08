@@ -4,7 +4,7 @@
     "name": "mongodb",
     "className": "org.apache.zeppelin.mongodb.MongoDbInterpreter",
     "properties": {
-      "mongo.shell.uri": {
+      "mongo.server.uri": {
         "envName": null,
         "propertyName": "mongo.server.uri",
         "defaultValue": "",
