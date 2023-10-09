@@ -87,8 +87,7 @@ public class MongoDbInterpreter extends Interpreter {
 
   @Override
   public InterpreterResult interpret(String script, InterpreterContext context) {
-    LOGGER.debug("Run MongoDB script: {}", script);
-
+    
     if (StringUtils.isEmpty(script)) {
       return new InterpreterResult(Code.SUCCESS);
     }
@@ -159,7 +158,6 @@ public class MongoDbInterpreter extends Interpreter {
     finally {
       FileUtils.deleteQuietly(scriptFile);
     }
-
     return result;
   }
 
