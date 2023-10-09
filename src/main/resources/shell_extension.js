@@ -7,18 +7,20 @@ function flattenObject(obj, flattenArray) {
         if (!obj.hasOwnProperty(i)) continue;
         
         //if ((typeof obj[i]) == 'object') {
-        if (toString.call( obj[i] ) === '[object Object]' ||
-            toString.call( obj[i] ) === '[object BSON]' ||
-          (flattenArray && toString.call( obj[i] ) === '[object Array]')) {
+        if (obj[i] != undefined && obj[i] != null && obj[i]._bsontype  == 'ObjectId') {
+            toReturn[i] = EJSON.stringify(obj[i]);
+        } else if ( toString.call( obj[i] ) === '[object Object]' ||
+                    toString.call( obj[i] ) === '[object BSON]' ||
+                    (flattenArray && toString.call( obj[i] ) === '[object Array]')) {
             var flatObject = flattenObject(obj[i]);
             for (var x in flatObject) {
                 if (!flatObject.hasOwnProperty(x)) continue;
                 
-                toReturn[i + '.' + x] = flatObject[x];
+                toReturn[i + '.' + x] =  flatObject[x];
             }
         } else if (toString.call( obj[i] ) === '[object Array]') {
-            toReturn[i] = tojson(obj[i], null, true);
-        } else {
+            toReturn[i] = EJSON.stringify(obj[i]);
+        } else  {
             toReturn[i] = obj[i];
         }
     }
@@ -80,13 +82,16 @@ function printTable(dbquery, fields, flattenArray) {
     });
 }
 
-DBQuery.prototype.table = function (fields, flattenArray) {
+DBQuery.table = function (fields, flattenArray) {
     if (this._limit > _ZEPPELIN_TABLE_LIMIT_) {
         this.limit(_ZEPPELIN_TABLE_LIMIT_);
     }
     printTable(this, fields, flattenArray);
 }
 
-DBCommandCursor.prototype.table = DBQuery.prototype.table;
+function table(cursor) {
+    printTable(cursor,null,[]);
+}
+//DBCommandCursor.prototype.table = DBQuery.prototype.table;
 
 
